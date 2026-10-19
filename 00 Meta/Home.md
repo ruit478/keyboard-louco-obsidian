@@ -6,7 +6,7 @@ date: 2026-10-19
 
 # Home
 
-Keyboard Louco vault dashboard.
+Mochicap vault dashboard.
 
 ## Navigation
 
@@ -17,6 +17,7 @@ Keyboard Louco vault dashboard.
 
 ## Key notes
 
-- [[Backend Feature Roadmap|Backend roadmap]] — full backend feature map
+- [[10 Business/Strategy/Product Roadmap|Product roadmap]] — Phase 1 Shopify store, Phase 2 custom platform
+- [[Backend Feature Roadmap|Backend roadmap]] — Phase 2 platform feature map
 - [[10 Business/Decisions/locked-decisions|Locked decisions]] — single source of truth for product decisions
 - [[README|Project overview]] — product overview (also renders on GitHub)

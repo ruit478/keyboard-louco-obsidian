@@ -1,6 +1,10 @@
+---
+type: note
+status: active
+date: 2026-10-19
+---
 
-
-> Scope: Stock keycap keychains (ordered from supplier) + collectible QR claim system.
+> Scope: **Phase 2 — custom platform**: stock keycap keychains (ordered from supplier) + collectible QR claim system. Phase 1 runs on Shopify with no custom backend ([[10 Business/Strategy/Product Roadmap|product roadmap]]).
 > Format: grouped feature map with critical backend notes.
 
 ---
@@ -161,7 +165,7 @@ Treat this as its own subsystem.
 
 ---
 
-## Suggested Build Order
+## Phase 2 Build Order
 
 1. **Accounts + email verification + admin role**
 2. **Product catalog + variants**

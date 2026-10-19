@@ -6,7 +6,7 @@ date: 2026-10-19
 
 # Technical
 
-Technical side of Keyboard Louco.
+Technical side of Mochicap.
 
 - [[20 Technical/Backend/_Index|Backend]] — API, DB, QR claim system
 - [[20 Technical/Frontend/_Index|Frontend]] — web app, claim page

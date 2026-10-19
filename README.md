@@ -1,14 +1,19 @@
-# ⌨️ Keyboard Louco
+# ⌨️ Mochicap
 
-Stock keycap keychains with a collectible twist: every keychain ships with a QR card that unlocks a collectible tied to its design.
+Keycap keychains, shipped in two phases: a Shopify customization store first, then a custom platform with a collectible QR claim system.
 
-> 📖 This README is a distilled overview. The full feature map and rationale live in [`backend_roadmap.md`](Backend%20Feature%20Roadmap.md).
+> 📖 This README is a distilled overview. The full feature map and rationale live in [`backend_roadmap.md`](Backend%20Feature%20Roadmap.md) (Phase 2) and [`10 Business/Strategy/Product Roadmap.md`](10%20Business/Strategy/Product%20Roadmap.md).
 
 ---
 
 ## What is it?
 
-Keyboard Louco sells finished keycap keychains — **ordered from an external supplier**, not assembled or printed in-house. The differentiator is the **collectible QR claim system**:
+Mochicap sells finished keycap keychains — **ordered from an external supplier**, not assembled or printed in-house. The plan has two phases:
+
+- **Phase 1 — Shopify store (dropshipping).** A Shopify store where users customize their keychains by picking from set options (base color, keycap count, switch type — variant picker only). Orders are fulfilled by the supplier. No custom backend.
+- **Phase 2 — Custom platform + collectible QR claim.** The differentiator: every keychain ships with a QR card that unlocks a collectible tied to its design.
+
+### Phase 2 — how the QR claim works
 
 1. A customer buys a keychain of design X.
 2. At packing time, a QR card is generated and packed with the unit.
@@ -16,7 +21,7 @@ Keyboard Louco sells finished keycap keychains — **ordered from an external su
 
 **Collectibles are tied 1:1 to keychain designs** — buying design X always grants collectible X. No randomness, no custom printing.
 
-## How the QR claim works
+## Phase 2 — QR claim mechanics
 
 - Each QR encodes `https://<domain>/claim/<token>` with a **unique, random, high-entropy token**. Only the token **hash** is stored, never the raw token.
 - Claims are **atomic conditional updates** (`UPDATE ... WHERE status='unclaimed'`), so two users scanning the same QR simultaneously can't both win.
@@ -24,7 +29,7 @@ Keyboard Louco sells finished keycap keychains — **ordered from an external su
 - **Duplicate claims are rejected** and the QR stays unclaimed — the physical card remains claimable by someone else (gift/trade mechanic). No points conversion.
 - Every scan attempt is audited (token hash, user, IP, timestamp, result).
 
-## Feature map
+## Phase 2 — feature map
 
 | Area | Highlights |
 |---|---|
@@ -38,7 +43,7 @@ Keyboard Louco sells finished keycap keychains — **ordered from an external su
 | **Admin / Back Office** | Separate auth with least-privilege roles, product/stock/order/QR/collectible/user management, audit log, dashboard (orders, revenue, low stock, claim rate, failed claims) |
 | **Notifications** | Transactional email via provider (Resend/SendGrid/Postmark), versioned templates; push notifications deferred |
 
-## Cross-cutting backend concerns
+## Cross-cutting backend concerns (Phase 2)
 
 - **Database constraints over app logic** — uniqueness and atomicity live in the DB, not the application layer.
 - **Idempotency** — checkout key on payment calls, webhook dedupe on provider event IDs; the claim token is its own natural idempotency key.
@@ -49,7 +54,7 @@ Keyboard Louco sells finished keycap keychains — **ordered from an external su
 - **Feature flags** — claim and other features ship behind flags so they can be disabled without redeploy.
 - **Concurrency tests are non-negotiable** for claim and stock reservation.
 
-## Suggested build order
+## Phase 2 — suggested build order
 
 1. Accounts + email verification + admin role — everything depends on identity
 2. Product catalog + variants — the SKU model
@@ -64,14 +69,15 @@ Keyboard Louco sells finished keycap keychains — **ordered from an external su
 
 *(2026-10-19 — full rationale in [`10 Business/Decisions/locked-decisions.md`](10%20Business/Decisions/locked-decisions.md).)*
 
-1. **"Unique per user" is type-level** — one claim per user per collectible design.
-2. **Duplicate claim → reject**, QR stays unclaimed (gift/trade). No points conversion.
-3. **No custom printing** — finished keychains are ordered from an external supplier; the claim system is the product.
-4. **Stock is finished keychains per variant**; our DB is the source of truth.
-5. **QR placement: insert card, printed at packing** — instances bind to order lines at packing, not order creation.
-6. **No guest checkout** for now — account required; revisit if conversion suffers.
-7. **Account deletion removes claimed collectibles**; QR instances stay claimed/voided — deletion must not enable claim farming via account churn.
-8. **Collectible is tied to the keychain design** — no randomness.
+1. **Two-phase plan** — Phase 1: Shopify store with dropshipping; customization via variant options only. Phase 2: the custom platform with the collectible QR claim system (this roadmap).
+2. **"Unique per user" is type-level** — one claim per user per collectible design.
+3. **Duplicate claim → reject**, QR stays unclaimed (gift/trade). No points conversion.
+4. **No custom printing** — finished keychains are ordered from an external supplier; the claim system is the product.
+5. **Stock is finished keychains per variant**; our DB is the source of truth (Phase 2).
+6. **QR placement: insert card, printed at packing** — instances bind to order lines at packing, not order creation.
+7. **No guest checkout** for now (Phase 2) — account required; revisit if conversion suffers.
+8. **Account deletion removes claimed collectibles**; QR instances stay claimed/voided — deletion must not enable claim farming via account churn.
+9. **Collectible is tied to the keychain design** — no randomness.
 
 ## Vault structure
 
@@ -89,9 +95,9 @@ keyboard-louco-obsidian/
 │
 ├── 01 Inbox/                    # quick capture — file during weekly review
 │
-├── 10 Business/                 # NON-TECHNICAL side of Keyboard Louco
+├── 10 Business/                 # NON-TECHNICAL side of Mochicap
 │   ├── _Index.md
-│   ├── Strategy/                # vision, business model, milestones
+│   ├── Strategy/                # vision, business model, milestones (product roadmap lives here)
 │   ├── Decisions/               # locked decisions, decision log
 │   ├── Product/                 # catalog strategy, collectible concepts
 │   ├── Marketing/               # brand, launch plan, social, SEO
@@ -101,7 +107,7 @@ keyboard-louco-obsidian/
 │
 ├── 20 Technical/                # TECHNICAL side
 │   ├── _Index.md
-│   ├── Backend/                 # API + DB + QR claim system (backend_roadmap.md lives here)
+│   ├── Backend/                 # API + DB + QR claim system — Phase 2 (backend_roadmap.md lives here)
 │   ├── Frontend/                # web app, claim page
 │   ├── Infrastructure/          # hosting, S3/R2, email provider, observability
 │   ├── Design/                  # UI/UX, collectible art specs

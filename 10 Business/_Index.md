@@ -6,7 +6,7 @@ date: 2026-10-19
 
 # Business
 
-Non-technical side of Keyboard Louco.
+Non-technical side of Mochicap.
 
 - [[10 Business/Strategy/_Index|Strategy]] — vision, business model, milestones
 - [[10 Business/Decisions/_Index|Decisions]] — locked decisions, decision log

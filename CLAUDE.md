@@ -1,6 +1,6 @@
 # CLAUDE.md — Vault conventions
 
-This is the Keyboard Louco Obsidian vault. These conventions apply to humans and AI agents (Claude Code, etc.) working in it.
+This is the Mochicap Obsidian vault. These conventions apply to humans and AI agents (Claude Code, etc.) working in it.
 
 ## Structure
 
