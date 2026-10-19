@@ -1,0 +1,16 @@
+# Obsidian — per-device state (committed config lives in app.json,
+# appearance.json, core-plugins.json, community-plugins.json, and plugins/*/data.json)
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache/
+
+# Deleted notes (recoverable in-app via "Deleted files")
+.trash/
+
+# Claude Code — per-machine settings
+.claude/settings.local.json
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
