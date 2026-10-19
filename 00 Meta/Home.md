@@ -17,6 +17,6 @@ Keyboard Louco vault dashboard.
 
 ## Key notes
 
-- [[20 Technical/Backend/backend_roadmap|Backend roadmap]] — full backend feature map
+- [[Backend Feature Roadmap|Backend roadmap]] — full backend feature map
 - [[10 Business/Decisions/locked-decisions|Locked decisions]] — single source of truth for product decisions
 - [[README|Project overview]] — product overview (also renders on GitHub)

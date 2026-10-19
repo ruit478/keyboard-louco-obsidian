@@ -2,7 +2,7 @@
 
 Stock keycap keychains with a collectible twist: every keychain ships with a QR card that unlocks a collectible tied to its design.
 
-> 📖 This README is a distilled overview. The full feature map and rationale live in [`backend_roadmap.md`](20%20Technical/Backend/backend_roadmap.md).
+> 📖 This README is a distilled overview. The full feature map and rationale live in [`backend_roadmap.md`](Backend%20Feature%20Roadmap.md).
 
 ---
 
