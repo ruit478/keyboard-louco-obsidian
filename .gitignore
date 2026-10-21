@@ -1,8 +1,5 @@
-# Obsidian — per-device state (committed config lives in app.json,
-# appearance.json, core-plugins.json, community-plugins.json, and plugins/*/data.json)
-.obsidian/workspace.json
-.obsidian/workspace-mobile.json
-.obsidian/cache/
+# Obsidian — per-device state
+.obsidian/
 
 # Deleted notes (recoverable in-app via "Deleted files")
 .trash/
