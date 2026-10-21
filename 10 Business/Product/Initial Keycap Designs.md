@@ -55,4 +55,4 @@ date: 2026-10-21
 
 ## Open questions
 
-- **Collectible metadata** (display names, rarity, edition sizes) is Phase 2 scope — nothing locked here yet.
+- **Collectible metadata** (display names, rarity, edition sizes) is Phase 2 scope; nothing locked here yet.

@@ -4,7 +4,7 @@ status: active
 date: 2026-10-19
 ---
 
-> Scope: **Phase 2 — custom platform**: stock keycap keychains (ordered from supplier) + collectible QR claim system. Phase 1 runs on Shopify with no custom backend ([[10 Business/Strategy/Product Roadmap|product roadmap]]).
+> Scope: **Phase 2 (custom platform)**: stock keycap keychains (ordered from supplier) + collectible QR claim system. Phase 1 runs on Shopify with no custom backend ([[10 Business/Strategy/Product Roadmap|product roadmap]]).
 > Format: grouped feature map with critical backend notes.
 
 ---
@@ -60,10 +60,10 @@ Treat this as its own subsystem.
 | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Collectible definition             | A collectible "type" (design, name, image, rarity, edition size). **Tied 1:1 to the product design** (buying a keychain of design X always ships a QR card that grants collectible X)                                                                                                                                                                      |
 | Collectible instance               | A unique QR card: `collectible_instance_id` + `qr_code` (unique) + `status` (unclaimed/claimed/void).                                                                                                                                                                                                                                                      |
-| QR code generation                 | The QR is printed on an insert card and packed with the unit. Each QR encodes a claim URL (`https://<domain>/claim/<token>`) with a **unique, random, high-entropy token** — never a sequential ID. Store token hash, not the raw token, to prevent DB-leak forgery.                                                                                       |
+| QR code generation                 | The QR is printed on an insert card and packed with the unit. Each QR encodes a claim URL (`https://<domain>/claim/<token>`) with a **unique, random, high-entropy token**; never a sequential ID. Store token hash, not the raw token, to prevent DB-leak forgery.                                                                                       |
 | QR claim endpoint                  | `POST /claim` with token. Atomic claim via conditional update. Idempotency comes from the token itself (A re-scan by the same user returns the existing result)                                                                                                                                                                                            |
 | Uniqueness per user                | **Locked: type-level.** Each instance is claimed by exactly one user, and a user can claim each collectible type at most once. Enforce with `UNIQUE (user_id, collectible_type_id)` plus the atomic claim update.                                                                                                                                          |
-| Claim race condition               | Two users scanning the same QR simultaneously must not both succeed. Use an atomic conditional update — `UPDATE instances SET status='claimed', claimed_by=? WHERE id=? AND status='unclaimed'` and check rows affected. (A unique constraint on `(collectible_instance_id, user_id)` does **not** prevent this: a second user has a different `user_id`.) |
+| Claim race condition               | Two users scanning the same QR simultaneously must not both succeed. Use an atomic conditional update: `UPDATE instances SET status='claimed', claimed_by=? WHERE id=? AND status='unclaimed'` and check rows affected. (A unique constraint on `(collectible_instance_id, user_id)` does **not** prevent this: a second user has a different `user_id`.) |
 | Claim requires auth                | Force login + email verification before claim. Otherwise anyone can burn QRs.                                                                                                                                                                                                                                                                              |
 | Collectible gallery                | User's claimed collectibles, with claimed date, rarity, "owned" badge.                                                                                                                                                                                                                                                                                     |
 | Duplicate handling                 | **Locked: reject.** If the user already owns that collectible type, the claim is rejected with an "already owned" response. The QR stays **unclaimed** (the physical unit remains claimable, opening the possibility for a future gift/trade mechanic). No points conversion (avoids farming incentives).                                                  |
@@ -86,9 +86,9 @@ Treat this as its own subsystem.
 | Order creation           | Atomic: reserve stock, create order. Collectible instances are **bound** when the QR card is generated (see Collectibles & QR Claim).             |
 | Payment failure handling | Release stock reservation, keep cart intact, notify user.                                                                                         |
 | Idempotent checkout      | Prevent double-charge on double-click / retry.  Idempotency key per checkout attempt, passed to the payment provider on PaymentIntent creation.   |
-| Shipping calculation     | Flat rate / weight-based / zone-based. Keychains are light — keep it simple.                                                                      |
+| Shipping calculation     | Flat rate / weight-based / zone-based. Keychains are light, so keep it simple.                                                                      |
 | Discount codes / coupons | Optional but high-value for launch.                                                                                                               |
-| Guest checkout           | **Locked: none.** Account required to check out — no guest checkout for now. Keeps the order → account link simple and every claim authenticated. |
+| Guest checkout           | **Locked: none.** Account required to check out: no guest checkout for now. Keeps the order → account link simple and every claim authenticated. |
 
 ---
 
@@ -101,8 +101,8 @@ Treat this as its own subsystem.
 | Order status machine          | `pending_payment → paid → in_production → shipped → delivered`, plus separate `payment_failed`, `cancelled`, and `refunded` states, each with its own invariants (`cancelled`: release components, no QRs generated yet; `refunded`: partial/full money back, QR stays claimed). Explicit states, no free-text status. |
 | Order → collectible link      | Instances are bound to order lines at packing time (QR card generated and packed with the unit). Orders reference the `collectible_instance_id(s)` after fulfillment.                                                                                                                                                  |
 | Fulfillment / tracking number | Manual entry or carrier API.                                                                                                                                                                                                                                                                                           |
-| Cancellation                  | Customer-initiated (before packing) and admin-initiated. Must release component stock. Before packing: no QRs exist yet — nothing to void. After packing: void the order's bound QR instances.                                                                                                                         |
-| Refunds                       | Full/partial. Decide what happens to already-claimed collectibles on refund — likely keep them claimed (revoking feels punitive) but document the policy.                                                                                                                                                              |
+| Cancellation                  | Customer-initiated (before packing) and admin-initiated. Must release component stock. Before packing: no QRs exist yet, so nothing to void. After packing: void the order's bound QR instances.                                                                                                                         |
+| Refunds                       | Full/partial. Decide what happens to already-claimed collectibles on refund: likely keep them claimed (revoking feels punitive) but document the policy.                                                                                                                                                              |
 | Order emails                  | Confirmation, shipped, delivered. Transactional only.                                                                                                                                                                                                                                                                  |
 | Admin order management        | Search, filter by status, bulk actions, export.                                                                                                                                                                                                                                                                        |
 | Invoice / receipt             | PDF generation.                                                                                                                                                                                                                                                                                                        |
@@ -145,7 +145,7 @@ Treat this as its own subsystem.
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | Transactional email                   | Verification, password reset, order confirmation, shipping, claim success. Use a provider (Resend/SendGrid/Postmark).     |
 | Email templates                       | Versioned, testable.                                                                                                      |
-| Claim confirmation                    | When a QR is claimed, show + email a confirmation with the collectible art. This is the emotional payoff — don't skip it. |
+| Claim confirmation                    | When a QR is claimed, show + email a confirmation with the collectible art. This is the emotional payoff, so don't skip it. |
 
 ---
 
@@ -154,8 +154,8 @@ Treat this as its own subsystem.
 | Concern                    | Why it matters here                                                                                                                                                         |
 | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **File storage**           | Product images + collectible art. Use S3/R2 with signed URLs and lifecycle rules.                                                                                           |
-| **Image processing**       | Product image thumbnails/sizes (sharp/imgproxy at the CDN/edge). No upload or print pipeline — nothing gets printed.                                                        |
-| **Idempotency**            | Checkout: idempotency key on the outbound payment call. Payment webhooks: dedupe on the provider's event ID. QR claim: the token is the natural key — no client key needed. |
+| **Image processing**       | Product image thumbnails/sizes (sharp/imgproxy at the CDN/edge). No upload or print pipeline; nothing gets printed.                                                        |
+| **Idempotency**            | Checkout: idempotency key on the outbound payment call. Payment webhooks: dedupe on the provider's event ID. QR claim: the token is the natural key: no client key needed. |
 | **Rate limiting**          | Especially on `/claim` and `/login`.                                                                                                                                        |
 | **Audit logging**          | Admin actions + claim attempts.                                                                                                                                             |
 | **Observability**          | Structured logs, error tracking (Sentry), uptime monitoring, alert on failed claims / failed payments.                                                                      |
@@ -180,4 +180,4 @@ Treat this as its own subsystem.
 
 ## Locked Decisions
 
-Moved to [[10 Business/Decisions/locked-decisions|locked decisions]] — the single source of truth for product-level decisions.
+Moved to [[10 Business/Decisions/locked-decisions|locked decisions]]: the single source of truth for product-level decisions.
